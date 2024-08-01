@@ -8,12 +8,14 @@ import streamlit as st
 from tensorflow.keras.models import load_model
 from PIL import Image
 import numpy as np
+from tensorflow.keras.applications.vgg16 import  preprocess_input
 
 
 # In[3]:
 
 
-model = load_model('brain_tumor_detection_model.h5')
+# model = load_model('brain_tumor_detection_model.h5')
+model = load_model('TF_brain_tumor_detection_model.h5')
 
 
 # In[8]:
@@ -46,10 +48,10 @@ def convert_to_array(image):
 
 
 def predict(image):
-    image = resize_and_padding(image, (244, 244))  # Ensure the target size matches your model's input
+    image = resize_and_padding(image, (224, 224))  # Ensure the target size matches your model's input
     image = convert_to_array(image)
     image = rescale(image)
-    image = normalize_image(image)
+    image = preprocess_input(image)  # Use VGG16 preprocessing
     image = np.expand_dims(image, axis=0)  # Add batch dimension
     prediction = model.predict(image)
     return 'Tumor' if prediction[0] > 0.5 else 'No Tumor'
